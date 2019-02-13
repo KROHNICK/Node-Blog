@@ -13,4 +13,25 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  if (!req.body.text) {
+    res.status(400).json({ error: "Please provide text for the post." });
+    return;
+  }
+
+  try {
+    const postFull = {
+      text: req.body.text,
+      user_id: req.body.user_id
+    };
+    let newId = await db.insert(postFull);
+    let newPost = await db.getById(newId.id);
+    res.status(201).json(newPost);
+  } catch (error) {
+    res.status(500).json({
+      error: "There was an error while saving the post to the database"
+    });
+  }
+});
+
 module.exports = router;

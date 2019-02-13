@@ -8,8 +8,8 @@ server.use("/api/", mainRouter);
 
 server.get("/", async (req, res) => {
   res.send(`
-    <h2>Node Blog</h>
-    <p>Node Blogging</p>
+    <h1>Node Blog API</h1>
+    <p>Welcome to Node Blog API</p>
   `);
 });
 
