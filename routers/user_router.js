@@ -82,4 +82,24 @@ router.get("/:id/posts", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  if (!req.body.name) {
+    res.status(400).json({ error: "The user must have a name" });
+    return;
+  }
+
+  try {
+    const user = await db.update(req.params.id, req.body);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ message: "The user could not be found" });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "Error updating the user"
+    });
+  }
+});
+
 module.exports = router;
