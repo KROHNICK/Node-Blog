@@ -6,16 +6,16 @@ router.get("/", async (req, res) => {
   try {
     let posts = await db.get();
     res.status(200).json(posts);
-  } catch (error) {
+  } catch (err) {
     res
       .status(500)
-      .json({ error: "The posts information could not be retrieved." });
+      .json({ err: "The posts information could not be retrieved." });
   }
 });
 
 router.post("/", async (req, res) => {
   if (!req.body.text) {
-    res.status(400).json({ error: "Please provide text for the post." });
+    res.status(400).json({ err: "Please provide text for the post." });
     return;
   }
 
@@ -27,9 +27,9 @@ router.post("/", async (req, res) => {
     let newId = await db.insert(postFull);
     let newPost = await db.getById(newId.id);
     res.status(201).json(newPost);
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({
-      error: "There was an error while saving the post to the database"
+      err: "There was an error while saving the post to the database"
     });
   }
 });
@@ -44,10 +44,10 @@ router.get("/:id", async (req, res) => {
         .status(404)
         .json({ message: "The post with the specified ID does not exist." });
     }
-  } catch (error) {
+  } catch (err) {
     res
       .status(500)
-      .json({ error: "The post information could not be retrieved." });
+      .json({ err: "The post information could not be retrieved." });
   }
 });
 
@@ -59,10 +59,29 @@ router.delete("/:id", async (req, res) => {
     } else {
       res.status(404).json({ message: "The post could not be found" });
     }
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
     res.status(500).json({
       message: "Error removing the post"
+    });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  if (!req.body.text) {
+    res.status(400).json({ err: "Please provide text for the post." });
+    return;
+  }
+
+  try {
+    const post = await db.update(req.params.id, req.body);
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: "The post could not be found" });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "Error updating the post"
     });
   }
 });
